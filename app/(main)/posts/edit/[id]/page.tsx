@@ -1,3 +1,4 @@
+'use client';
 import { BackButton } from '@/components/BackButton';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
@@ -30,7 +31,25 @@ const formSchema = z.object({
   }),
 });
 
-const PostEditPage = () => {
+interface PostEditPageProps {
+  params: {
+    id: string;
+  };
+}
+
+const PostEditPage = ({ params }: PostEditPageProps) => {
+  const post = posts.find((post) => post.id === params.id);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: post?.title || '',
+      body: post?.body || '',
+      author: post?.author || '',
+      date: post?.date || '',
+    },
+  });
+
   return (
     <>
       <BackButton text='Back To Posts' link='/posts' />
